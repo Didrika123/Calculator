@@ -4,7 +4,6 @@ namespace Calculator
 {
     class Program
     {
-        delegate double Calculation(double numA, double numB);
         static void Main(string[] args)
         {
             bool keepRunning = true;
@@ -12,56 +11,43 @@ namespace Calculator
             {
                 ShowMenu();
                 string input = AskUserFor("selection");
-                int.TryParse(input, out int choice);
-                if (input.ToLower() == "exit")
+
+                if (input.ToLower() != "exit")
                 {
-                    keepRunning = false;
-                }
-                else
-                {
-                    Calculation calc = null;
+                    int.TryParse(input, out int choice);
                     switch (choice)
                     {
                         case 1:
-                            calc = Add;
+                            DoCalculation('+');
                             break;
                         case 2:
-                            calc = Subtract;
+                            DoCalculation('-');
                             break;
                         case 3:
-                            calc = Divide;
+                            DoCalculation('/');
                             break;
                         case 4:
-                            calc = Multiply;
+                            DoCalculation('*');
                             break;
                         default:
                             ShowError("Please enter a proper command.");
                             break;
                     }
-                    if(calc != null)
-                        PresentResult(calc);
-
                     Console.ReadKey();
                 }
+                else keepRunning = false;
             }
         }
         static void ShowMenu()
         {
             Console.Clear();
             Console.WriteLine("Welcome to the Calculator!\n");
-            Console.WriteLine("1 - Addition");
-            Console.WriteLine("2 - Subtraction");
-            Console.WriteLine("3 - Division");
-            Console.WriteLine("4 - Multiplication");
-            Console.WriteLine("\"Exit\" to leave\n");
+            Console.WriteLine("\t1 - Addition       (+)");
+            Console.WriteLine("\t2 - Subtraction    (-)");
+            Console.WriteLine("\t3 - Division       (/)");
+            Console.WriteLine("\t4 - Multiplication (*)");
+            Console.WriteLine("\tExit to leave\n");
 
-        }
-        static string AskUserFor(string what)
-        {
-
-            Console.Write($"Enter {what}: ");
-            string input = Console.ReadLine();
-            return input;
         }
         static void ShowError(string msg)
         {
@@ -69,12 +55,11 @@ namespace Calculator
             Console.WriteLine("Error: " + msg);
             Console.ForegroundColor = ConsoleColor.White;
         }
-        static void PresentResult(Calculation calc)
+        static string AskUserFor(string what)
         {
-            double numA = AskUserForNumber();
-            double numB = AskUserForNumber();
-            double result = calc(numA, numB);
-            Console.Write("Result: " + Math.Round(result, 4));
+            Console.Write($"Enter {what}: ");
+            string input = Console.ReadLine();
+            return input;
         }
         static double AskUserForNumber()
         {
@@ -84,6 +69,34 @@ namespace Calculator
                 ShowError("Enter a number.");
             }
             return num;
+        }
+        static void DoCalculation(char operation)
+        {
+            Console.Clear();
+            Console.WriteLine("Operation: " + operation + "\n");
+            double numA = AskUserForNumber();
+            double numB = AskUserForNumber();
+            double result = 0;
+            switch (operation)
+            {
+                case '+':
+                    result = Add(numA, numB);
+                    break;
+                case '-':
+                    result = Subtract(numA, numB);
+                    break;
+                case '/':
+                    if (numB == 0)
+                        ShowError("Division by Zero.");
+                    result = Divide(numA, numB);
+                    break;
+                case '*':
+                    result = Multiply(numA, numB);
+                    break;
+            }
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"\nResult: {numA} {operation} {numB} = {Math.Round(result, 4)}");
+            Console.ForegroundColor = ConsoleColor.White;
         }
         static double Add(double numA, double numB)
         {
