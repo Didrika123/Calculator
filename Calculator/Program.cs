@@ -4,94 +4,86 @@ namespace Calculator
 {
     class Program
     {
+        delegate double Calculation(double numA, double numB);
         static void Main(string[] args)
         {
-            Console.WriteLine("Welcome to the Calculator!");
             bool keepRunning = true;
             while (keepRunning)
             {
-                Console.Write("\nEnter a mathematical expression or \"exit\" to leave. \nInput> ");
-                string input = Console.ReadLine();
+                ShowMenu();
+                string input = AskUserFor("selection");
+                int.TryParse(input, out int choice);
                 if (input.ToLower() == "exit")
                 {
                     keepRunning = false;
                 }
                 else
                 {
-                    double result = DoCalculation(input);
-                    Console.WriteLine("Result: " + result);
-
-                    int choice;
-                    int.TryParse(input, out choice);
+                    Calculation calc = null;
                     switch (choice)
                     {
                         case 1:
-                            PresentResult(Add(AskUserForNumber(), AskUserForNumber()));
+                            calc = Add;
                             break;
                         case 2:
-                            PresentResult(Subtract(AskUserForNumber(), AskUserForNumber()));
+                            calc = Subtract;
                             break;
                         case 3:
-                            PresentResult(Divide(AskUserForNumber(), AskUserForNumber()));
+                            calc = Divide;
                             break;
                         case 4:
-                            PresentResult(Multiply(AskUserForNumber(), AskUserForNumber()));
+                            calc = Multiply;
                             break;
                         default:
-                            Console.WriteLine("Enter a menu choice! ");
+                            ShowError("Please enter a proper command.");
                             break;
                     }
+                    if(calc != null)
+                        PresentResult(calc);
+
+                    Console.ReadKey();
                 }
             }
         }
-        static void PresentResult(double result)
+        static void ShowMenu()
         {
-            Console.WriteLine("Enter number: ");
+            Console.Clear();
+            Console.WriteLine("Welcome to the Calculator!\n");
+            Console.WriteLine("1 - Addition");
+            Console.WriteLine("2 - Subtraction");
+            Console.WriteLine("3 - Division");
+            Console.WriteLine("4 - Multiplication");
+            Console.WriteLine("\"Exit\" to leave\n");
+
+        }
+        static string AskUserFor(string what)
+        {
+
+            Console.Write($"Enter {what}: ");
+            string input = Console.ReadLine();
+            return input;
+        }
+        static void ShowError(string msg)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("Error: " + msg);
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+        static void PresentResult(Calculation calc)
+        {
+            double numA = AskUserForNumber();
+            double numB = AskUserForNumber();
+            double result = calc(numA, numB);
+            Console.Write("Result: " + Math.Round(result, 4));
         }
         static double AskUserForNumber()
         {
             double num;
-            string input;
-            do
+            while (!double.TryParse(AskUserFor("number"), out num))
             {
-                Console.Write("Enter number: ");
-                input = Console.ReadLine();
-
-            } while (!double.TryParse(input, out num));
-            return num;
-        }
-        static double DoCalculation(string expression)
-        {
-            double result = 0;
-            expression = expression.Replace(" ", "");
-            var acceptableOperators = new char[] { '+', '-', '/', '*' };
-            int firstOperatorIndex = expression.IndexOfAny(acceptableOperators);
-            if (firstOperatorIndex > 0) 
-            { 
-                char opera = expression[firstOperatorIndex];
-                result = int.Parse(expression.Substring(0, firstOperatorIndex));
-                string remaining = expression.Substring(firstOperatorIndex + 1);
-                switch (opera)
-                {
-                    case '+':
-                        result = Add(result, DoCalculation(remaining));
-                        break;
-                    case '-':
-                        break;
-                    case '/':
-                        break;
-                    case '*':
-                        int index = remaining.IndexOfAny(acceptableOperators);
-                        if (index < 0)
-                            index = remaining.Length;
-                        string nextNumber = remaining.Substring(0, index);
-                        result = Multiply(result, DoCalculation(nextNumber));
-                        result = DoCalculation(result + remaining.Substring(index));
-                        break;
-                }
+                ShowError("Enter a number.");
             }
-            else result = int.Parse(expression);
-            return result;
+            return num;
         }
         static double Add(double numA, double numB)
         {
