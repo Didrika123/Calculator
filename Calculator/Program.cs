@@ -49,6 +49,13 @@ namespace Calculator
             Console.WriteLine("\tExit to leave\n");
 
         }
+        static void ShowResult(char operation, double numA, double numB, double result)
+        {
+            result = Math.Round(result, 4);
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"\nResult: {numA} {operation} {numB} = {result}");
+            Console.ForegroundColor = ConsoleColor.White;
+        }
         static void ShowError(string msg)
         {
             Console.ForegroundColor = ConsoleColor.Red;
@@ -72,28 +79,20 @@ namespace Calculator
         }
         static double Calculate(char operation, double numA, double numB)
         {
-            double result = 0;
             switch (operation)
             {
                 case '+':
-                    result = Add(numA, numB);
-                    break;
+                    return Add(numA, numB);
                 case '-':
-                    result = Subtract(numA, numB);
-                    break;
+                    return Subtract(numA, numB);
                 case '/':
-                    if (numB == 0)
-                        ShowError("Division by Zero.");
-                    result = Divide(numA, numB);
-                    break;
+                    return Divide(numA, numB);
                 case '*':
-                    result = Multiply(numA, numB);
-                    break;
+                    return Multiply(numA, numB);
                 default:
                     ShowError($"Unsupported operator ({operation}).");
-                    break;
+                    return 0;
             }
-            return result;
         }
         static void LetUserCalculate(char operation)
         {
@@ -102,11 +101,7 @@ namespace Calculator
             double numA = AskUserForNumber();
             double numB = AskUserForNumber();
             double result = Calculate(operation, numA, numB);
-
-            //present result
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"\nResult: {numA} {operation} {numB} = {Math.Round(result, 4)}");
-            Console.ForegroundColor = ConsoleColor.White;
+            ShowResult(operation, numA, numB, result);
         }
         static double Add(double numA, double numB)
         {
@@ -118,6 +113,8 @@ namespace Calculator
         }
         static double Divide(double numA, double numB)
         {
+            if (numB == 0)
+                ShowError("Division by Zero.");
             return numA / numB;
         }
         static double Multiply(double numA, double numB)
