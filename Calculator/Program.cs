@@ -29,9 +29,6 @@ namespace Calculator
                         case 4:
                             LetUserCalculate('*');
                             break;
-                        case 5:
-                            IntervalBeeps();
-                            break;
                         default:
                             ShowError("Please enter a proper command.");
                             break;
@@ -41,27 +38,6 @@ namespace Calculator
                 else keepRunning = false;
             }
         }
-        static void IntervalBeeps()
-        {
-            Console.Clear();
-            Console.WriteLine("Number of intervals");
-            int numIntervals = (int)AskUserForNumber();
-            Console.WriteLine("Number of seconds per interval");
-            int intervalSeconds = (int) AskUserForNumber();
-            Console.WriteLine("Commencing Interval-beeping...");
-            DateTime start = DateTime.Now;
-            double numSec = 0;
-            for (int i = 0; i < numIntervals; i++)
-            {
-                while (numSec < intervalSeconds * (1+i))
-                {
-                    numSec = DateTime.Now.Subtract(start).TotalSeconds;
-                }
-                Console.Beep();
-                Console.WriteLine("Beep!  (" + numSec + " sec)");
-            }
-            Console.WriteLine("Interval-beeping completed after " + numSec + " seconds.");
-        }
         static void ShowMenu()
         {
             Console.Clear();
@@ -70,7 +46,6 @@ namespace Calculator
             Console.WriteLine("\t2 - Subtraction    (-)");
             Console.WriteLine("\t3 - Division       (/)");
             Console.WriteLine("\t4 - Multiplication (*)");
-            Console.WriteLine("\t5 - Interval-Beeps");
             Console.WriteLine("\tExit to leave\n");
 
         }
