@@ -18,16 +18,19 @@ namespace Calculator
                     switch (choice)
                     {
                         case 1:
-                            DoCalculation('+');
+                            LetUserCalculate('+');
                             break;
                         case 2:
-                            DoCalculation('-');
+                            LetUserCalculate('-');
                             break;
                         case 3:
-                            DoCalculation('/');
+                            LetUserCalculate('/');
                             break;
                         case 4:
-                            DoCalculation('*');
+                            LetUserCalculate('*');
+                            break;
+                        case 5:
+                            IntervalBeeps();
                             break;
                         default:
                             ShowError("Please enter a proper command.");
@@ -38,6 +41,27 @@ namespace Calculator
                 else keepRunning = false;
             }
         }
+        static void IntervalBeeps()
+        {
+            Console.Clear();
+            Console.WriteLine("Number of intervals");
+            int numIntervals = (int)AskUserForNumber();
+            Console.WriteLine("Number of seconds per interval");
+            int intervalSeconds = (int) AskUserForNumber();
+            Console.WriteLine("Commencing Interval-beeping...");
+            DateTime start = DateTime.Now;
+            double numSec = 0;
+            for (int i = 0; i < numIntervals; i++)
+            {
+                while (numSec < intervalSeconds * (1+i))
+                {
+                    numSec = DateTime.Now.Subtract(start).TotalSeconds;
+                }
+                Console.Beep();
+                Console.WriteLine("Beep!  (" + numSec + " sec)");
+            }
+            Console.WriteLine("Interval-beeping completed after " + numSec + " seconds.");
+        }
         static void ShowMenu()
         {
             Console.Clear();
@@ -46,6 +70,7 @@ namespace Calculator
             Console.WriteLine("\t2 - Subtraction    (-)");
             Console.WriteLine("\t3 - Division       (/)");
             Console.WriteLine("\t4 - Multiplication (*)");
+            Console.WriteLine("\t5 - Interval-Beeps");
             Console.WriteLine("\tExit to leave\n");
 
         }
@@ -70,12 +95,8 @@ namespace Calculator
             }
             return num;
         }
-        static void DoCalculation(char operation)
+        static double Calculate(char operation, double numA, double numB)
         {
-            Console.Clear();
-            Console.WriteLine("Operation: " + operation + "\n");
-            double numA = AskUserForNumber();
-            double numB = AskUserForNumber();
             double result = 0;
             switch (operation)
             {
@@ -93,7 +114,21 @@ namespace Calculator
                 case '*':
                     result = Multiply(numA, numB);
                     break;
+                default:
+                    ShowError($"Unsupported operator ({operation}).");
+                    break;
             }
+            return result;
+        }
+        static void LetUserCalculate(char operation)
+        {
+            Console.Clear();
+            Console.WriteLine("Operation: " + operation + "\n");
+            double numA = AskUserForNumber();
+            double numB = AskUserForNumber();
+            double result = Calculate(operation, numA, numB);
+
+            //present result
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"\nResult: {numA} {operation} {numB} = {Math.Round(result, 4)}");
             Console.ForegroundColor = ConsoleColor.White;
