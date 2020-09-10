@@ -2,7 +2,7 @@
 
 namespace Calculator
 {
-    class Program
+    public class Program
     {
         static void Main(string[] args)
         {
@@ -86,7 +86,14 @@ namespace Calculator
                 case '-':
                     return Subtract(numA, numB);
                 case '/':
-                    return Divide(numA, numB);
+                    try
+                    {
+                        return Divide(numA, numB);
+                    }
+                    catch(DivideByZeroException)
+                    {
+                        return 0;
+                    }
                 case '*':
                     return Multiply(numA, numB);
                 default:
@@ -103,21 +110,24 @@ namespace Calculator
             double result = Calculate(operation, numA, numB);
             ShowResult(operation, numA, numB, result);
         }
-        static double Add(double numA, double numB)
+        public static double Add(double numA, double numB)
         {
             return numA + numB;
         }
-        static double Subtract(double numA, double numB)
+        public static double Subtract(double numA, double numB)
         {
             return numA - numB;
         }
-        static double Divide(double numA, double numB)
+        public static double Divide(double numA, double numB)
         {
             if (numB == 0)
+            {
                 ShowError("Division by Zero.");
+                throw new DivideByZeroException();
+            }
             return numA / numB;
         }
-        static double Multiply(double numA, double numB)
+        public static double Multiply(double numA, double numB)
         {
             return numA * numB;
         }

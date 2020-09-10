@@ -1,0 +1,16 @@
+﻿Add_GivenTwoDoubles_ReturnsDouble
+1,1,2
+12,21,33
+
+Subtract_GivenTwoDoubles_ReturnsDouble
+1,1,0
+12,21,-9
+
+Divide_GivenTwoDoubles_ReturnsDouble
+1,1,1
+5,2,2.5
+52,0,0
+
+Multiply_GivenTwoDoubles_ReturnsDouble
+1,1,1
+5,-4,-20
